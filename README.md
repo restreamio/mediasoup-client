@@ -1,5 +1,7 @@
 # mediasoup-client v3
 
+> Includes a workaround for Chrome 87 of [#144](https://github.com/versatica/mediasoup-client/issues/144)
+
 [![][npm-shield-mediasoup-client]][npm-mediasoup-client]
 [![][travis-ci-shield-mediasoup-client]][travis-ci-mediasoup-client]
 
@@ -40,10 +42,10 @@ if (!device.canProduce('video'))
 }
 
 // Create a transport in the server for sending our media through it.
-const { 
-  id, 
-  iceParameters, 
-  iceCandidates, 
+const {
+  id,
+  iceParameters,
+  iceCandidates,
   dtlsParameters,
   sctpParameters
 } = await mySignaling.request(
@@ -55,9 +57,9 @@ const {
 // Create the local representation of our server-side transport.
 const sendTransport = device.createSendTransport(
   {
-    id, 
-    iceParameters, 
-    iceCandidates, 
+    id,
+    iceParameters,
+    iceCandidates,
     dtlsParameters,
     sctpParameters
   });
@@ -95,7 +97,7 @@ sendTransport.on(
     {
       const { id } = await mySignaling.request(
         'produce',
-        { 
+        {
           transportId : sendTransport.id,
           kind,
           rtpParameters,
@@ -122,7 +124,7 @@ sendTransport.on(
     {
       const { id } = await mySignaling.request(
         'produceData',
-        { 
+        {
           transportId : sendTransport.id,
           sctpStreamParameters,
           label,

@@ -18,6 +18,11 @@ import { SctpParameters } from '../../SctpParameters';
 
 const logger = new Logger('RemoteSdp');
 
+function getChromeVersion (): number | false {
+	var raw = navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
+	return raw ? parseInt(raw[2], 10) : false;
+}
+
 export class RemoteSdp
 {
 	// Remote ICE parameters.
@@ -284,6 +289,9 @@ export class RemoteSdp
 
 	closeMediaSection(mid: string): void
 	{
+		// Workaround for `createOffer` bug in Chrome 87
+		// @see https://github.com/versatica/mediasoup-client/issues/144
+		const isChrome87 = getChromeVersion() === 87
 		const idx = this._midToIndex.get(mid);
 
 		if (idx === undefined)
@@ -295,7 +303,7 @@ export class RemoteSdp
 
 		// NOTE: Closing the first m section is a pain since it invalidates the
 		// bundled transport, so let's avoid it.
-		if (mid === this._firstMid)
+		if (isChrome87 || mid === this._firstMid)
 		{
 			logger.debug(
 				'closeMediaSection() | cannot close first media section, disabling it instead [mid:%s]',
